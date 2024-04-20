@@ -37,12 +37,10 @@ embed_model = OpenAIEmbeddings(
 )
 messages2 = [
     SystemMessage(
-        content="""You are a complete insurance policy expert. You can take in a file and determine what is the insurance   
-                           a person is paying verses the insurance that one should pay based on various factors.
-                  
-                  Return your responses in a structured report format. You can also provide a summary of the differences and similarities between the two policies.
-                  Remember to mention clearly which company you are talking about so that the reader can understand the context of the information provided.
-                  You can also provide numbers and clear differences between the two policies."""
+        content="""You are a complete insurance policy expert. You can answer any questions about the insurance policy of a user. Analyze the uploaded insurance policy and provide a detailed reports on whatever the user requests.
+        Remember to provide exact numbers and figures from the policy for better understanding.
+        
+        Return your responses in a structured report format. Focus on the costs of the policy, the coverage provided, and any other important details that the user may need to know. You can also provide a summary of the policy and its benefits."""
     ),
 ]
 messages = [
@@ -76,6 +74,20 @@ text_field = "context"  # the metadata field that contains our text
 # initialize the vector store object
 vectorstore = Pine(index, embed_model.embed_query, text_field)
 
+@app.route("/load_info_pdf", methods=["GET"])
+def load_info_pdf():
+    try:
+        text = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\002_Health_Coverage_Basics.pdf")
+        pdf_data = read_pdf(text)
+
+        pdf_chunks = split_into_sentence_chunks(pdf_data, max_chunk_length)
+        add_embeds(pdf_chunks, embed_model, index)
+        return "Added PDF data to the database!", 200
+    except Exception as e:
+        # Log the error or print it for debugging
+        print("Error:", e)
+        # Return an appropriate error response
+        return "Internal Server Error", 500
 
 @app.route("/predict-premium", methods=["POST"])
 def predict_premium():
@@ -85,7 +97,7 @@ def predict_premium():
         print(df)
 
         model = joblib.load(
-            "//Users/abhyudaygoyal/Desktop/InsuranceHack/xgb_regression_model.pkl"
+            "./xgb_regression_model.pkl"
         )
 
         result = model.predict(df)
@@ -103,7 +115,7 @@ def get_chat_search_data():
         return "Missing files", 400
     pdf1 = request.files["pdf1"]
     pdf1.save("./pdf1.pdf")
-    text1 = pdf_to_text("/Users/abhyudaygoyal/Desktop/InsuranceHack/pdf1.pdf")
+    text1 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf1.pdf")
     pdf1_data = read_pdf(text1)
 
     pdf1_chunks = split_into_sentence_chunks(pdf1_data, max_chunk_length)
@@ -132,8 +144,8 @@ def upload_policies():
     pdf1.save("./pdf1.pdf")
     pdf2.save("./pdf2.pdf")
 
-    text1 = pdf_to_text(r"/Users/abhyudaygoyal/Desktop/InsuranceHack/pdf1.pdf")
-    text2 = pdf_to_text(r"/Users/abhyudaygoyal/Desktop/InsuranceHack/pdf2.pdf")
+    text1 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf1.pdf")
+    text2 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf2.pdf")
 
     pdf1_data = read_pdf(text1)
     pdf2_data = read_pdf(text2)

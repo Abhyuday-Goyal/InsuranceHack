@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+002_Health_Coverage_Basics_extracted.txt
+002_Health_Coverage_Basics.pdf
+
 # C extensions
 *.so
 pdf1.pdf
