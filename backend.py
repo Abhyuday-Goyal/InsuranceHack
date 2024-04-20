@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 import joblib
+from sqlalchemy import create_engine, Column, String, Integer, Float, Boolean
 from pdftext import pdf_to_text
 from main import read_pdf, add_embeds
 from pinecone import Pinecone
@@ -10,8 +11,11 @@ from pinecone.config import Config
 from pinecone import ServerlessSpec
 from langchain_openai import OpenAIEmbeddings
 import os
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 from langchain_openai import ChatOpenAI
 
+Base = declarative_base()
 from main import (
     create_index,
     read_pdf,
@@ -21,6 +25,7 @@ from main import (
 )
 
 app = Flask(__name__)
+
 
 pc_api_key = os.getenv("PINECONE_API_KEY")
 pc = Pinecone(api_key=pc_api_key)
@@ -60,6 +65,39 @@ messages = [
 ]
 
 
+class Person(Base):
+    __tablename__ = "people"
+    userID = Column("ID ", Integer, primary_key=True)
+    username = Column("FirstName", String)
+    age = Column("Age", Integer)
+    sex = Column("Sex", String)
+    bmi = Column("BMI", Float)
+    children = Column("Number of Children", Integer)
+    smoker = Column("smoker?", Boolean)
+    region = Column("region", String)
+
+
+engine = create_engine("sqlite:///new_database.db", echo=True)
+Base.metadata.create_all(bind=engine)
+Session = sessionmaker(bind=engine)
+
+
+@app.route("/add_person", methods=["POST"])
+def add_person():
+    session = Session()
+    try:
+        data = request.json
+        person = Person(**data)
+        session.add(person)
+        session.commit()
+        return jsonify({"message": "Person added successfully"}), 201
+    except Exception as e:
+        session.rollback()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        session.close()
+
+
 max_chunk_length = 500  # Choose the maximum length for each chunk
 index_name = "abhy21"
 
@@ -74,10 +112,13 @@ text_field = "context"  # the metadata field that contains our text
 # initialize the vector store object
 vectorstore = Pine(index, embed_model.embed_query, text_field)
 
+
 @app.route("/load_info_pdf", methods=["GET"])
 def load_info_pdf():
     try:
-        text = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\002_Health_Coverage_Basics.pdf")
+        text = pdf_to_text(
+            r"C:\Nishkal\Bitcamp 2024\InsuranceHack\002_Health_Coverage_Basics.pdf"
+        )
         pdf_data = read_pdf(text)
 
         pdf_chunks = split_into_sentence_chunks(pdf_data, max_chunk_length)
@@ -89,6 +130,7 @@ def load_info_pdf():
         # Return an appropriate error response
         return "Internal Server Error", 500
 
+
 @app.route("/predict-premium", methods=["POST"])
 def predict_premium():
     try:
@@ -96,9 +138,7 @@ def predict_premium():
         df = pd.DataFrame(input_data)
         print(df)
 
-        model = joblib.load(
-            "./xgb_regression_model.pkl"
-        )
+        model = joblib.load("./xgb_regression_model.pkl")
 
         result = model.predict(df)
         return str(result[0])
