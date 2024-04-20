@@ -86,18 +86,13 @@ messages = [
 
 retriever = vectorstore.as_retriever()
 
-# Initialize Pinecone vector store
-# vectorstore = PineconeVectorStore(index_name=index_name, embedding=embeddings)
 def split_into_chunks(text, chunk_size=1000, chunk_overlap=0):
     loader = TextLoader(text)
     documents = loader.load()
     text_splitter = CharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
     docs = text_splitter.split_documents(documents)
     return docs
-# vectorstore = PineconeVectorStore(index_name=index_name, embedding=embeddings)
-# vectorstore_from_docs = PineconeVectorStore.from_documents(
-#   docs, index_name=index_name, embedding=embeddings
-# )
+
 
 def add_embeds(chunks):
     vectorstore.add_documents(chunks)
