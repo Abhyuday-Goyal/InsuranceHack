@@ -1,125 +1,84 @@
 import os
-from langchain_core.output_parsers import StrOutputParser
-from langchain_openai import ChatOpenAI
-from langchain.chains import RetrievalQA
-from langchain.chains.question_answering import load_qa_chain
-from langchain.chains.question_answering import load_qa_chain
-from langchain import OpenAI
-from langchain_core.runnables import (
-    RunnableParallel,
-    RunnablePassthrough,
-    RunnableLambda,
-)
-
-use_serverless = True
-from langchain_core.prompts import ChatPromptTemplate
-import getpass
+from langchain.chat_models import ChatOpenAI
 from dotenv import load_dotenv
-from pinecone import Pinecone
-from pinecone import Pinecone, ServerlessSpec, PodSpec
-import time
-from langchain.schema import SystemMessage, HumanMessage, AIMessage
-
 load_dotenv()
-from langchain_pinecone import PineconeVectorStore
-from langchain_openai import OpenAIEmbeddings
-from langchain.document_loaders import TextLoader
-from langchain.text_splitter import (
-    RecursiveCharacterTextSplitter,
-    CharacterTextSplitter,
+from langchain.schema import (
+    SystemMessage,
+    HumanMessage,
+    AIMessage
 )
-from langchain_pinecone import PineconeVectorStore
-from langchain.vectorstores.base import VectorStore
+from langchain.vectorstores import Pinecone as Pine
+from pinecone import Pinecone
+from pinecone.config import Config
+from pinecone import ServerlessSpec
+from langchain.embeddings.openai import OpenAIEmbeddings
+from chunk_converter import split_into_sentence_chunks
+import PyPDF2
 
-
-api_key = os.getenv("OPENAI_API_KEY")
-pinecone_api_key = os.getenv("PINECONE_API_KEY")
-pc = Pinecone(api_key=pinecone_api_key)
-if use_serverless:
-    spec = ServerlessSpec(cloud="aws", region="us-east-1")
-else:
-    # if not using a starter index, you should specify a pod_type too
-    spec = PodSpec()
-# check for and delete index if already exists
-
-# Get index name from environment variable
-index_name = "abhy21"
-if index_name not in pc.list_indexes().names():
-    pc.create_index(
+def create_index(index_name, spec, pc):
+    if index_name not in pc.list_indexes():
+    # if does not exist, create index
+        pc.create_index(
         index_name,
-        dimension=1536,  # dimensionality of text-embedding-ada-002
-        metric="dotproduct",
-        spec=spec,
-    )
-    # Wait for index to be initialized
-    while not pc.describe_index(index_name).status["ready"]:
-        time.sleep(1)
-else:
-    print("Index already exists.")
-
-# wait for index to be initialized
-while not pc.describe_index(index_name).status["ready"]:
-    time.sleep(1)
-index = pc.Index(index_name)
-index.describe_index_stats()
-
-# Check if Pinecone API key is provided
-if pinecone_api_key is None:
-    raise ValueError(
-        "Pinecone API key must be provided in either PINECONE_API_KEY environment variable"
-    )
-
-    # Initialize OpenAI embeddings
-model_name = "text-embedding-ada-002"
-embeddings = OpenAIEmbeddings(model=model_name, openai_api_key=api_key)
-text_field = "text"
-vectorstore = PineconeVectorStore(index, embeddings, text_field)
-
-messages = [
-    SystemMessage(
-        content="You are a helpful assistant that answers questions and asks questions if prompted using the contexts given."
-    ),
-    HumanMessage(content="Hi AI, how are you today?"),
-    AIMessage(content="I'm great thank you. How can I help you?"),
-    # HumanMessage(content="I'd like to understand string theory.")
-]
-
-retriever = vectorstore.as_retriever()
-
-def split_into_chunks(text, chunk_size=1000, chunk_overlap=0):
-    loader = TextLoader(text)
-    documents = loader.load()
-    text_splitter = CharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
-    docs = text_splitter.split_documents(documents)
-    return docs
-
-
-def add_embeds(chunks):
-    vectorstore.add_documents(chunks)
-
-# Perform similarity search
-def process_query(query):
-    template = """Answer the question based only on the following context:
-    {context}
-    Question: {question}
-    """
-    prompt = ChatPromptTemplate.from_template(template)
-
-    # RAG
-    model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
-
-    chain = (
-        RunnableParallel({"context": retriever, "question": RunnablePassthrough()})
-        # Add this line
-        | prompt
-        | model
-        | StrOutputParser()
-    )
-
-    return chain.invoke(query)
-
+        dimension=1536,  # dimensionality of ada 002
+        metric='dotproduct',
+        spec=spec
+        )
 
 def read_pdf(path):
-    with open(path, "r") as f: 
+    with open(os.path.join(path), "r") as f: 
         data = f.read()
     return data
+
+def add_embeds(sentence_chunks, embed_model, index):
+    from tqdm.auto import tqdm
+    from uuid import uuid4
+    import time
+
+    batch_size = 250
+    for i in tqdm(range(0, len(sentence_chunks), batch_size)):
+        
+        i_min = min(i+batch_size, len(sentence_chunks))
+        batch = sentence_chunks[i: i_min]
+        meta_data = [{"title" : 'notes', 
+                "context": row}
+                    for row in batch]
+        ids = [str(uuid4()) for _ in range(len(batch))]
+        # Encode the text to obtain its vector representation
+        embeds = embed_model.embed_documents(batch)
+        
+        # Upsert the vector and text into the Pinecone index
+        index.upsert(vectors=zip(ids, embeds, meta_data))
+        print('sleepin')
+        time.sleep(4)
+
+def augment_prompt(query: str, vectorstore: Pinecone):
+    # get top 3 results from knowledge base
+    results = vectorstore.similarity_search(query, k=5)
+    # get the text from the results
+    source_knowledge = "\n".join([x.page_content for x in results])
+    # feed into an augmented prompt
+    # augmented_prompt = f"""Using the contexts below, answer the query.
+
+    # Contexts:
+    # {source_knowledge}
+
+    # Query: {query}"""
+
+    augmented_prompt = f"""Use the given context to provide answers to the query.
+
+    Contexts:
+    {source_knowledge}
+
+    Quert:
+    {query}"""
+    return augmented_prompt
+
+
+def execute_query(query, messages, chat, vectorstore: Pinecone):
+    prompt = HumanMessage(
+    content=augment_prompt(query, vectorstore=vectorstore))
+    # add to messages
+    messages.append(prompt)
+    res = chat(messages)
+    return res.content

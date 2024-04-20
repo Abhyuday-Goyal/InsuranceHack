@@ -8,7 +8,7 @@ def pdf_to_text(pdf_path):
     text_filename = os.path.splitext(pdf_filename)[0] + "_extracted.txt"
 
     # Open the PDF file in binary mode
-    with open(pdf_path, "rb") as pdf_file:
+    with open(os.path.join(pdf_path), "rb") as pdf_file:
         # Create a PDF file reader object
         pdf_reader = PyPDF2.PdfReader(pdf_file)
 
