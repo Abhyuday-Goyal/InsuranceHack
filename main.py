@@ -124,7 +124,7 @@ def process_query(query):
     return chain.invoke(query)
 
 
-def read_pdf(path = 'cs103x-notes.text'):
+def read_pdf(path):
     with open(path, "r") as f: 
         data = f.read()
     return data
