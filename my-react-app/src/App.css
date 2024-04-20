@@ -1,0 +1,277 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+body {
+  font-family: 'Nunito Sans';
+}
+:root {
+  --background-color: #121212;
+  --text-color: #ffffff;
+  --accent-color: #c00f0f;
+  --button-hover-color: #e85a5a;
+  --header-bg-color: #333333;
+  --modal-bg-color: #444444;
+  --taskbar-color: #c00f0f;
+}
+
+.App {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Montserrat', sans-serif;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.task-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--taskbar-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  height: 70px; /* Adjust the height as needed */
+  margin-bottom: 20px; /* Adjust the margin (height) between elements */
+}
+
+
+.task-bar .logo {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-color);
+}
+
+.task-bar-link, .task-bar-button {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s;
+  cursor: pointer;
+}
+
+.task-bar-link:hover, .task-bar-button:hover {
+  color: var(--background-color);
+}
+
+/* Ensure the taskbar contents fit within the viewport */
+@media (max-width: 970px) {
+  .task-bar {
+    flex-wrap: wrap;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .task-bar .logo,
+  .task-bar nav {
+    flex-basis: 100%;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+}
+
+/* Style adjustments for smaller screens */
+@media (max-width: 500px) {
+  .task-bar {
+    flex-direction: column;
+  }
+
+  .task-bar .logo,
+  .task-bar nav {
+    width: 100%;
+    text-align: center;
+  }
+
+  .task-bar-link, .task-bar-button {
+    display: block;
+    width: 100%;
+  }
+}
+.task-bar-link:last-child, .task-bar-button:last-child {
+  margin-right: 2rem; /* Increase the right margin of the last item */
+}
+.App-header {
+  background-color: var(--modal-bg-color);
+  color: var(--text-color);
+  padding: 2rem;
+  border-radius: 15px;
+  margin: auto;
+  width: 80%;
+  max-width: 500px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.App-button {
+  background-color: var(--accent-color);
+  color: var(--text-color);
+  border: none;
+  padding: 10px 20px;
+  margin: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.App-button:hover {
+  background-color: var(--button-hover-color);
+}
+.file-upload-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 20px;
+}
+
+.file-upload-button {
+  margin-top: 20px;
+  border-radius: 8px;
+  width: auto; /* Adjust width as needed, could be a percentage or fixed width */
+  height: 50px; /* Match the height of your drop-down */
+  background-color: var(--accent-color); /* Header color, dark shade */
+  color: #fff; /* Text color, white */
+  font-size: 1rem; /* Adjust as needed */
+  font-weight: bold; /* Match the font weight from your example */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+  padding: 0 30px; /* Padding on the sides */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.file-upload-button:hover {
+  background-color: var(--button-hover-color); /* Slightly lighter shade on hover */
+}
+
+/* Hidden file input */
+.file-upload-input {
+  display: none; /* Hide the file input */
+}
+
+.loader {
+  border: 6px solid #f3f3f3; /* Light grey */
+  border-top: 6px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-left {
+  animation: slideInFromLeft 1.0s ease-out forwards;
+}
+.slide-in-right {
+  animation: slideInFromRight 1.0s ease-out backwards;
+}
+
+.animated-header {
+  transition: transform 0.5s ease, padding 0.5s ease;
+}
+
+.move-left {
+  transform: translateX(-20px); /* Move to the left */
+  padding-left: 20px; /* Add padding on the left */
+}
+.form-field {
+  position: relative;
+  display: inline-block;
+}
+
+.icon {
+  position: absolute;
+  right: 0;
+}
+.search-notes-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 5%; /* Pushes content up */
+  height: calc(100vh - 70px); /* Subtracting taskbar height */
+  box-sizing: border-box;
+}
+
+.search-notes-content {
+  flex-grow: 0;
+  margin-bottom: 20px; /* Space before the output box */
+}
+
+.search-notes-title {
+  color: var(--text-color);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.search-notes-input-container {
+  margin-bottom: 2rem; /* Space before the output box */
+}
+
+.search-notes-input {
+  width: 90%; /* Making search bar a bit longer */
+  max-width: 900px; /* Larger max width */
+  padding: 1rem;
+  font-size: 1rem;
+  color: var(--text-color);
+  background-color: var(--modal-bg-color);
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.backend-output-box {
+  width: 300%; /* Match width to search bar */
+  height: 400px; /* Decent size for output */
+  background-color: var(--modal-bg-color); /* Matching contrast */
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px; /* Space after the output box */
+}
+/* App.css */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.search-notes-title,
+.search-notes-input {
+  animation: fade-in 1.0s ease-in-out; /* Adjust the animation duration and timing function as needed */
+}
+.fade-in {
+  animation: fadeInAnimation 1s ease-in-out forwards;
+}
+
+@keyframes fadeInAnimation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
