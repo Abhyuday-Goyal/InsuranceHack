@@ -29,7 +29,6 @@ from langchain.text_splitter import (
     CharacterTextSplitter,
 )
 from langchain_pinecone import PineconeVectorStore
-
 from langchain.vectorstores.base import VectorStore
 
 
@@ -76,19 +75,6 @@ embeddings = OpenAIEmbeddings(model=model_name, openai_api_key=api_key)
 text_field = "text"
 vectorstore = PineconeVectorStore(index, embeddings, text_field)
 
-# Initialize Pinecone vector store
-# vectorstore = PineconeVectorStore(index_name=index_name, embedding=embeddings)
-loader = TextLoader("boston_extracted.txt")
-documents = loader.load()
-text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
-docs = text_splitter.split_documents(documents)
-# vectorstore = PineconeVectorStore(index_name=index_name, embedding=embeddings)
-# vectorstore_from_docs = PineconeVectorStore.from_documents(
-#   docs, index_name=index_name, embedding=embeddings
-# )
-retriever = vectorstore.as_retriever()
-
-vectorstore.add_documents(docs)
 messages = [
     SystemMessage(
         content="You are a helpful assistant that answers questions and asks questions if prompted using the contexts given."
@@ -97,28 +83,48 @@ messages = [
     AIMessage(content="I'm great thank you. How can I help you?"),
     # HumanMessage(content="I'd like to understand string theory.")
 ]
+
+retriever = vectorstore.as_retriever()
+
+# Initialize Pinecone vector store
+# vectorstore = PineconeVectorStore(index_name=index_name, embedding=embeddings)
+def split_into_chunks(text, chunk_size=1000, chunk_overlap=0):
+    loader = TextLoader(text)
+    documents = loader.load()
+    text_splitter = CharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    docs = text_splitter.split_documents(documents)
+    return docs
+# vectorstore = PineconeVectorStore(index_name=index_name, embedding=embeddings)
+# vectorstore_from_docs = PineconeVectorStore.from_documents(
+#   docs, index_name=index_name, embedding=embeddings
+# )
+
+def add_embeds(chunks):
+    vectorstore.add_documents(chunks)
+
 # Perform similarity search
-query = "what is flight number"
-results = vectorstore.similarity_search(
-    query=query, k=3  # our search query  # return 3 most relevant docs
-)
+def process_query(query):
+    template = """Answer the question based only on the following context:
+    {context}
+    Question: {question}
+    """
+    prompt = ChatPromptTemplate.from_template(template)
+
+    # RAG
+    model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+
+    chain = (
+        RunnableParallel({"context": retriever, "question": RunnablePassthrough()})
+        # Add this line
+        | prompt
+        | model
+        | StrOutputParser()
+    )
+
+    return chain.invoke(query)
 
 
-template = """Answer the question based only on the following context:
-{context}
-Question: {question}
-"""
-prompt = ChatPromptTemplate.from_template(template)
-
-# RAG
-model = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
-
-chain = (
-    RunnableParallel({"context": retriever, "question": RunnablePassthrough()})
-    # Add this line
-    | prompt
-    | model
-    | StrOutputParser()
-)
-
-print(chain.invoke("what is flight number"))
+def read_pdf(path = 'cs103x-notes.text'):
+    with open(path, "r") as f: 
+        data = f.read()
+    return data

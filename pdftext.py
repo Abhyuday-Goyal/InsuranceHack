@@ -29,9 +29,9 @@ def pdf_to_text(pdf_path):
 
 
 # Path to the PDF file you want to convert
-pdf_file_path = "boston.pdf"
+# pdf_file_path = "boston.pdf"
 
-# Convert PDF to text and get the generated text file name
-text_file_path = pdf_to_text(pdf_file_path)
+# # Convert PDF to text and get the generated text file name
+# text_file_path = pdf_to_text(pdf_file_path)
 
-print("Text extracted and saved to", text_file_path)
+# print("Text extracted and saved to", text_file_path)
