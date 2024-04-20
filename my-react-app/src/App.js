@@ -10,6 +10,7 @@ import PdfUploadPage from './PdfUploadPage';
 import AboutUsPage from './AboutUsPage';
 import TaskBar from './TaskBar';
 import Compare from './Compare';
+import Form from './Form'
 
 const App = () => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -34,7 +35,7 @@ const App = () => {
         <TaskBar />
         <Routes>
           
-       
+          <Route path ="/" element = {<Form></Form>}/>
           <Route path ="/compare" element = {<Compare></Compare>}/>
           <Route path="/search-notes" element={<SearchNotesPage />} />
           <Route path="/pdf-upload" element={<PdfUploadPage />} />

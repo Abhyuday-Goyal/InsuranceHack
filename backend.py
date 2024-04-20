@@ -98,6 +98,19 @@ def add_person():
         session.close()
 
 
+@app.route("/get_people", methods=["GET"])
+def get_people():
+    session = Session()
+    try:
+        people = session.query(Person).all()
+        serialized_people = [person.__dict__ for person in people]
+        return jsonify(serialized_people), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        session.close()
+
+
 max_chunk_length = 500  # Choose the maximum length for each chunk
 index_name = "abhy21"
 
