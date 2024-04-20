@@ -1,5 +1,5 @@
 import os
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 load_dotenv()
 from langchain.schema import (
@@ -11,7 +11,7 @@ from langchain.vectorstores import Pinecone as Pine
 from pinecone import Pinecone
 from pinecone.config import Config
 from pinecone import ServerlessSpec
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 from chunk_converter import split_into_sentence_chunks
 import PyPDF2
 
@@ -26,9 +26,10 @@ def create_index(index_name, spec, pc):
         )
 
 def read_pdf(path):
-    with open(os.path.join(path), "r") as f: 
-        data = f.read()
-    return data
+    with open(os.path.join(path), "rb") as f: 
+        byte_sequence = f.read()
+        content = byte_sequence.decode("utf-8", errors="ignore")
+        return content
 
 def add_embeds(sentence_chunks, embed_model, index):
     from tqdm.auto import tqdm
@@ -80,5 +81,5 @@ def execute_query(query, messages, chat, vectorstore: Pinecone):
     content=augment_prompt(query, vectorstore=vectorstore))
     # add to messages
     messages.append(prompt)
-    res = chat(messages)
+    res = chat.invoke(messages)
     return res.content

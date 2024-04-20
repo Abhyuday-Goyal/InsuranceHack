@@ -1,8 +1,4 @@
 from flask import Flask, request, jsonify
-from sklearn.preprocessing import StandardScaler
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
 import pandas as pd
 import joblib
 from pdftext import pdf_to_text
@@ -14,12 +10,11 @@ from langchain.schema import (
     AIMessage
 )
 from langchain.vectorstores import Pinecone as Pine
-from pinecone import Pinecone
 from pinecone.config import Config
 from pinecone import ServerlessSpec
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 import os 
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 
 from main import create_index, read_pdf, add_embeds, split_into_sentence_chunks, execute_query
 
@@ -45,7 +40,11 @@ embed_model = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key = 
 messages = [
     SystemMessage(content="""You are a complete insurance policy expert. You can answer questions about insurance policies and compare two insurance policies
                   to determine the differences and similarities between them. You can also provide recommendations based on the policies provided.
-                  You can also provide explanations on insurance terms and concepts. You can also provide general information on insurance policies."""),
+                  You can also provide explanations on insurance terms and concepts. You can also provide general information on insurance policies.
+                  
+                  Return your responses in a structured report format. You can also provide a summary of the differences and similarities between the two policies.
+                  Remember to mention clearly which company you are talking about so that the reader can understand the context of the information provided.
+                  You can also provide numbers and clear differences between the two policies."""),
     #SystemMessage(content="You are a helpful assistant that answers questions and asks questions if prompted using the contexts given."),
     HumanMessage(content="Hi AI, how are you today?"),
     AIMessage(content="I'm great thank you. How can I help you?"),
@@ -84,14 +83,17 @@ def upload_policies():
     if 'pdf1' not in request.files or 'pdf2' not in request.files:
         return 'Missing files', 400
     
+    uploaded_files = request.files.getlist("file")
+    print(uploaded_files)
+
+
     pdf1 = request.files['pdf1']
     pdf2 = request.files['pdf2']
-
     pdf1.save('./pdf1.pdf')
     pdf2.save('./pdf2.pdf')
 
     text1 = pdf_to_text(r'C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf1.pdf')
-    text2 = pdf_to_text(r'C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf1.pdf')
+    text2 = pdf_to_text(r'C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf2.pdf')
 
     pdf1_data = read_pdf(text1)
     pdf2_data = read_pdf(text2)

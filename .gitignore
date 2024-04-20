@@ -8,6 +8,9 @@ __pycache__/
 pdf1.pdf
 pdf2.pdf
 tmp/
+pdf1_extracted.txt
+pdf2_extracted.txt
+test.py
 
 # Distribution / packaging
 .Python
