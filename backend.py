@@ -35,7 +35,16 @@ chat = ChatOpenAI(openai_api_key=OPENAI_KEY, model="gpt-3.5-turbo")
 embed_model = OpenAIEmbeddings(
     model="text-embedding-ada-002", openai_api_key=OPENAI_KEY
 )
-
+messages2 = [
+    SystemMessage(
+        content="""You are a complete insurance policy expert. You can take in a file and determine what is the insurance   
+                           a person is paying verses the insurance that one should pay based on various factors.
+                  
+                  Return your responses in a structured report format. You can also provide a summary of the differences and similarities between the two policies.
+                  Remember to mention clearly which company you are talking about so that the reader can understand the context of the information provided.
+                  You can also provide numbers and clear differences between the two policies."""
+    ),
+]
 messages = [
     SystemMessage(
         content="""You are a complete insurance policy expert. You can answer questions about insurance policies and compare two insurance policies
@@ -70,20 +79,29 @@ vectorstore = Pine(index, embed_model.embed_query, text_field)
 
 @app.route("/predict-premium", methods=["POST"])
 def predict_premium():
-    input_data = request.get_json()
-    df = pd.DataFrame(input_data)
+    try:
+        input_data = request.get_json()
+        df = pd.DataFrame(input_data)
+        print(df)
 
-    model = joblib.load("xgb_regression_model.pkl")
+        model = joblib.load(
+            "//Users/abhyudaygoyal/Desktop/InsuranceHack/xgb_regression_model.pkl"
+        )
 
-    result = model.predict(df)
-    return str(result[0])
+        result = model.predict(df)
+        return str(result[0])
+    except Exception as e:
+        # Log the error or print it for debugging
+        print("Error:", e)
+        # Return an appropriate error response
+        return "Internal Server Error", 500
 
 
 @app.route("/chat-search-data", methods=["POST"])
 def get_chat_search_data():
     if "pdf1" not in request.files:
         return "Missing files", 400
-    pdf1 = request.files["./pdf1"]
+    pdf1 = request.files["pdf1"]
     pdf1.save("./pdf1.pdf")
     text1 = pdf_to_text("/Users/abhyudaygoyal/Desktop/InsuranceHack/pdf1.pdf")
     pdf1_data = read_pdf(text1)
@@ -91,6 +109,14 @@ def get_chat_search_data():
     pdf1_chunks = split_into_sentence_chunks(pdf1_data, max_chunk_length)
     add_embeds(pdf1_chunks, embed_model, index)
     return "Data Searched", 200
+
+
+@app.route("/single-file", methods=["POST"])
+def single_file():
+    input_data = request.json
+    query = input_data.get("query")
+    output = execute_query(query, messages2, chat, vectorstore)
+    return jsonify(output=output)
 
 
 @app.route("/upload-policies", methods=["POST"])
@@ -106,8 +132,8 @@ def upload_policies():
     pdf1.save("./pdf1.pdf")
     pdf2.save("./pdf2.pdf")
 
-    text1 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf1.pdf")
-    text2 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf2.pdf")
+    text1 = pdf_to_text(r"/Users/abhyudaygoyal/Desktop/InsuranceHack/pdf1.pdf")
+    text2 = pdf_to_text(r"/Users/abhyudaygoyal/Desktop/InsuranceHack/pdf2.pdf")
 
     pdf1_data = read_pdf(text1)
     pdf2_data = read_pdf(text2)
