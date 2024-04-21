@@ -113,7 +113,7 @@ def add_person():
         result = model.predict(df)
         result = (result[0] - 1121.87)/(63770.43 - 1121.87)
 
-        data["premium"] = result
+        data["riskIndex"] = result
 
         model = joblib.load("./xgb_regression_model.pkl")
 
