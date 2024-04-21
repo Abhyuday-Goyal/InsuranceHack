@@ -32,7 +32,7 @@ const Coverage = () => {
     
     <div className="file-upload-container">
       <div className="compare-container">
-        <h2>Coverage Analysis</h2>
+        <h2 style={{ marginRight: '140px' }}>Coverage Analysis</h2>
         <label htmlFor="pdf-upload" className="file-upload-button">
           Select File
         </label>

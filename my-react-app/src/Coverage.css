@@ -1,21 +1,23 @@
 .file-upload-container {
-  
+    display: flex;
     justify-content: center;
-    align-items: centre;
-    margin-top: -300px;
-    margin-left: -350px;
+    align-items: center;
+    height: 200vh; /* Make the container full height of the viewport */
   }
+  
   .compare-container {
     margin-bottom: 5px;
-    margin-left: 290px;
   }
+  
   .backend-output-boxx {
-    width: 500%; /* Match width to search bar */
-    height: 500px; /* Decent size for output */
-    background-color: var(--modal-bg-color); /* Matching contrast */
+    width: 700px; /* Adjusted width for better readability */
+    height: 500px;
+    background-color: var(--modal-bg-color);
     border-radius: 4px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-bottom: -100px; /* Space after the output box */
     margin-top: 30px;
-    margin-left: -435px;
   }
+  .compare-container {
+    text-align: center; /* Center-align text */
+  }
+  
