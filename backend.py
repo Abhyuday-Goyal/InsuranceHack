@@ -14,6 +14,7 @@ import os
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from langchain_openai import ChatOpenAI
+from find_provider_details import search_in_excel
 
 Base = declarative_base()
 from main import (
@@ -95,6 +96,25 @@ engine = create_engine("sqlite:///new_database.db", echo=True)
 Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 
+
+@app.route("/provider_details", methids=["POST"])
+def provider_details():
+    data = request.json
+    provider = data["provider"]
+    state = data["state"]
+    file_path = "transparency_in_coverage_PUF.xlsx"
+    sheet_name = "Transparency 2024 - Ind QHP"
+    search_column_index = 4
+    extract_columns = [14, 15, 16, 17]
+    result = search_in_excel(file_path, sheet_name, search_column_index, provider, extract_columns, state)
+
+    actual_result_dict = {}
+    actual_result_dict["Total In Network Claims"] = result[14]
+    actual_result_dict["Total Out of Network Claims"] = result[15]
+    actual_result_dict["Total In Network Denied Claims"] = result[16]
+    actual_result_dict["Total Out of Network Denied Claims"] = result[17]
+
+    return jsonify(actual_result_dict)
 
 @app.route("/add_person", methods=["POST"])
 def add_person():

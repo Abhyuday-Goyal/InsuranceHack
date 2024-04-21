@@ -24,9 +24,13 @@ def search_in_excel(file_path, sheet_name, search_column_index, search_string, e
     
     # Print or process matching row and values in other specified columns
     if matching_row is not None:
-        print("First matching row found in column {} for search string '{}' and state '{}':".format(search_column_index, search_string, state))
-        print("Row:", matching_row)
+        result_dict = {}
+        #print("First matching row found in column {} for search string '{}' and state '{}':".format(search_column_index, search_string, state))
+        #print("Row:", matching_row)
         for col_idx, value in other_column_values.items():
-            print("Value in column {}: {}".format(col_idx, value))
+            #print("Value in column {}: {}".format(col_idx, value))
+            result_dict[col_idx] = value
+        return result_dict
     else:
-        print("No matching rows found in column {} for search string '{}' and state '{}'".format(search_column_index, search_string, state))
+        #print("No matching rows found in column {} for search string '{}' and state '{}'".format(search_column_index, search_string, state))
+        return {"error": "No matching rows found"}
