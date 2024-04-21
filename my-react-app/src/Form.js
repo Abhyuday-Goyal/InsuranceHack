@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Form.css';
+
 const Form = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -8,6 +9,7 @@ const Form = () => {
     numberOfChildren: '',
     bmi: '',
     region: '',
+    stateInitials: '', // Added new field
   });
 
   const handleChange = (e) => {
@@ -97,6 +99,19 @@ const Form = () => {
             <option value="SE">Southeast (SE)</option>
           </select>
         </div>
+        {/* New form group for State (Initials) */}
+        <div className="form-group">
+          <label htmlFor="stateInitials">State (Initials):</label>
+          <input
+            type="text"
+            id="stateInitials"
+            name="stateInitials"
+            value={formData.stateInitials}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        {/* Submit button */}
         <button type="submit">Submit</button>
       </form>
     </div>

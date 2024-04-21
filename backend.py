@@ -16,7 +16,7 @@ from sqlalchemy.orm import sessionmaker
 from langchain_openai import ChatOpenAI
 from find_provider_details import search_in_excel
 import requests
-
+from flask_cors import CORS
 Base = declarative_base()
 from main import (
     create_index,
@@ -27,7 +27,7 @@ from main import (
 )
 
 app = Flask(__name__)
-
+CORS(app)
 
 pc_api_key = os.getenv("PINECONE_API_KEY")
 pc = Pinecone(api_key=pc_api_key)
@@ -249,12 +249,28 @@ def get_chat_search_data():
         return "Missing files", 400
     pdf1 = request.files["pdf1"]
     pdf1.save("./pdf1.pdf")
-    text1 = pdf_to_text("/Users/abhyudaygoyal/Desktop/InsuranceHack-1/pdf1.pdf")
+    text1 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf1.pdf")
     pdf1_data = read_pdf(text1)
 
     pdf1_chunks = split_into_sentence_chunks(pdf1_data, max_chunk_length)
     add_embeds(pdf1_chunks, embed_model, index)
-    return "Data Searched", 200
+    
+    query = "Can you give me a detailed description of this policy, including deductibles and coverages. Also give me information about the provider"
+    query += "\n\n\nKeywords: Schedule of Benefits, Coverage, Deductibles, $"
+    output = execute_query(query, messages2, chat, vectorstore)
+
+    if "provider" in query.lower():
+        output += "\n\n\nProvider Details: \n\n"
+        query_2 = """Give me the name of the provider"""
+        provider = execute_query(query_2, messages3, chat, vectorstore)
+        provider_info = requests.post(
+            "http://127.0.0.1:5000/provider_details", json={"provider": provider}
+        )
+        provider_info = provider_info.json()
+        for key, value in provider_info.items():
+            output += f"{key}: {value}\n"
+
+    return jsonify(output=output)
 
 
 @app.route("/single-file", methods=["POST"])
@@ -291,8 +307,8 @@ def upload_policies():
     pdf1.save("./pdf1.pdf")
     pdf2.save("./pdf2.pdf")
 
-    text1 = pdf_to_text("/Users/abhyudaygoyal/Desktop/InsuranceHack-1/pdf1.pdf")
-    text2 = pdf_to_text("/Users/abhyudaygoyal/Desktop/InsuranceHack-1/pdf2.pdf")
+    text1 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf1.pdf")
+    text2 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf1.pdf")
 
     pdf1_data = read_pdf(text1)
     pdf2_data = read_pdf(text2)

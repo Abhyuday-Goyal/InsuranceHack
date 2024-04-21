@@ -2,36 +2,34 @@ import React, { useState } from 'react';
 import './Coverage.css';
 
 const Coverage = () => {
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]); // Store uploaded files
+  const [fileName, setFileName] = useState('');
+  const [backendResponse, setBackendResponse] = useState('');
 
   const handleUpload = async (event) => {
     const file = event.target.files[0];
-    if (file) {
-      console.log('Uploading PDF file', file);
-
-      const formData = new FormData();
-      formData.append('pdf', file);
-
-      try {
-        await fetch('/single-file', {
-          method: 'POST',
-          body: JSON.stringify({ query: 'Coverage Analysis' }),
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-        setUploadedFiles(prevFiles => [...prevFiles, file]);
-      } catch (error) {
-        console.error('Error uploading file:', error);
-        // Handle error
-      }
-
-      event.target.value = null;
+    setFileName(event.target.files[0].name);
+    const formData = new FormData();
+    formData.append('pdf1', file);
+    try {
+      // Send the POST request to your custom API
+      const response = await fetch('http://127.0.0.1:5000/chat-search-data', {
+        method: 'POST',
+        body: formData,
+      });
+      // If successful, make a subsequent request to single-file
+      const responseData = await response.json();
+      console.log(responseData.output);
+      setBackendResponse(responseData.output);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      // Handle error state here (if needed)
     }
   };
 
   const removeFile = (fileName) => {
     setUploadedFiles(uploadedFiles.filter(file => file.name !== fileName));
+    // TODO: Also remove the file from the backend if needed
   };
 
   return (
@@ -59,8 +57,8 @@ const Coverage = () => {
             </li>
           ))}
         </ul>
-        <div className="backend-output-boxx fade-in"></div>
       </div>
+      {backendResponse && <div className="fade-in max-w-[50vw] overflow-auto p-10 bg-[#444444] rounded-lg"><p className='text-xl text-center'>{backendResponse}</p></div>}
     </div>
   );
 };
