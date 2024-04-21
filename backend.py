@@ -15,6 +15,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from langchain_openai import ChatOpenAI
 from find_provider_details import search_in_excel
+import requests
 
 Base = declarative_base()
 from main import (
@@ -79,6 +80,17 @@ messages = [
 ]
 
 
+messages3 = [
+    SystemMessage(
+        content = """Your only job is to give me the first word in the name of the insurance provider
+                    For example, if the provider is 'UnitedHealthcare', just say 'United'
+                    if the provider is 'Blue Cross Blue Shield', just say 'Blue'
+                    if the provider is 'Aetna' or 'Aetna insurance', just say 'Aetna'
+                    
+                    You will not return anything else apart from this name."""
+    ),
+]
+
 class Person(Base):
     __tablename__ = "people"
     userID = Column("ID ", Integer, primary_key=True)
@@ -90,6 +102,7 @@ class Person(Base):
     smoker = Column("smoker", String)
     region = Column("region", String)
     riskIndex = Column("risk_index", Float)
+    state = Column("state", String)
 
 
 engine = create_engine("sqlite:///new_database.db", echo=True)
@@ -101,7 +114,13 @@ Session = sessionmaker(bind=engine)
 def provider_details():
     data = request.json
     provider = data["provider"]
-    state = data["state"]
+
+    user_data = requests.get("http://127.0.0.1:5000/users")
+    user_data = user_data.json()
+    user_data = user_data["users"]
+    user_data = user_data[-1]
+
+    state = user_data["state"]
     file_path = "transparency_in_coverage_PUF.xlsx"
     sheet_name = "Transparency 2024 - Ind QHP"
     search_column_index = 4
@@ -162,6 +181,7 @@ def get_users():
             "children": user.children,
             "smoker": user.smoker,
             "region": user.region,
+            "state": user.state,
         }
         user_list.append(user_data)
     return jsonify({"users": user_list})
@@ -238,6 +258,16 @@ def single_file():
     query = input_data.get("query")
     query += "\n\n\nKeywords: Schedule of Benefits, Coverage, Deductibles, $"
     output = execute_query(query, messages2, chat, vectorstore)
+
+    if "provider" in query.lower():
+        output += "\n\n\nProvider Details: \n\n"
+        query_2 = """Give me the name of the provider"""
+        provider = execute_query(query_2, messages3, chat, vectorstore)
+        provider_info = requests.post("http://127.0.0.1:5000/provider_details", json={"provider": provider})
+        provider_info = provider_info.json()
+        for key, value in provider_info.items():
+            output += f"{key}: {value}\n"
+
     return jsonify(output=output)
 
 
