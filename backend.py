@@ -17,6 +17,7 @@ from langchain_openai import ChatOpenAI
 from find_provider_details import search_in_excel
 import requests
 from flask_cors import CORS
+
 Base = declarative_base()
 from main import (
     create_index,
@@ -152,6 +153,7 @@ def add_person():
             "children": [data["children"]],
             "smoker": [data["smoker"]],
             "region": [data["region"]],
+            "state": [data["state"]],
         }
 
         df = pd.DataFrame(input_data)
@@ -254,7 +256,7 @@ def get_chat_search_data():
 
     pdf1_chunks = split_into_sentence_chunks(pdf1_data, max_chunk_length)
     add_embeds(pdf1_chunks, embed_model, index)
-    
+
     query = "Can you give me a detailed description of this policy, including deductibles and coverages. Also give me information about the provider"
     query += "\n\n\nKeywords: Schedule of Benefits, Coverage, Deductibles, $"
     output = execute_query(query, messages2, chat, vectorstore)
