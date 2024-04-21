@@ -82,7 +82,7 @@ messages = [
 
 messages3 = [
     SystemMessage(
-        content = """Your only job is to give me the first word in the name of the insurance provider
+        content="""Your only job is to give me the first word in the name of the insurance provider
                     For example, if the provider is 'UnitedHealthcare', just say 'United'
                     if the provider is 'Blue Cross Blue Shield', just say 'Blue'
                     if the provider is 'Aetna' or 'Aetna insurance', just say 'Aetna'
@@ -90,6 +90,7 @@ messages3 = [
                     You will not return anything else apart from this name."""
     ),
 ]
+
 
 class Person(Base):
     __tablename__ = "people"
@@ -125,7 +126,9 @@ def provider_details():
     sheet_name = "Transparency 2024 - Ind QHP"
     search_column_index = 4
     extract_columns = [14, 15, 16, 17]
-    result = search_in_excel(file_path, sheet_name, search_column_index, provider, extract_columns, state)
+    result = search_in_excel(
+        file_path, sheet_name, search_column_index, provider, extract_columns, state
+    )
 
     actual_result_dict = {}
     actual_result_dict["Total In Network Claims"] = result[14]
@@ -134,6 +137,7 @@ def provider_details():
     actual_result_dict["Total Out of Network Denied Claims"] = result[17]
 
     return jsonify(actual_result_dict)
+
 
 @app.route("/add_person", methods=["POST"])
 def add_person():
@@ -167,6 +171,7 @@ def add_person():
         return jsonify({"error": str(e)}), 500
     finally:
         session.close()
+
 
 @app.route("/users", methods=["GET"])
 def get_users():
@@ -244,7 +249,7 @@ def get_chat_search_data():
         return "Missing files", 400
     pdf1 = request.files["pdf1"]
     pdf1.save("./pdf1.pdf")
-    text1 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf1.pdf")
+    text1 = pdf_to_text("/Users/abhyudaygoyal/Desktop/InsuranceHack-1/pdf1.pdf")
     pdf1_data = read_pdf(text1)
 
     pdf1_chunks = split_into_sentence_chunks(pdf1_data, max_chunk_length)
@@ -263,7 +268,9 @@ def single_file():
         output += "\n\n\nProvider Details: \n\n"
         query_2 = """Give me the name of the provider"""
         provider = execute_query(query_2, messages3, chat, vectorstore)
-        provider_info = requests.post("http://127.0.0.1:5000/provider_details", json={"provider": provider})
+        provider_info = requests.post(
+            "http://127.0.0.1:5000/provider_details", json={"provider": provider}
+        )
         provider_info = provider_info.json()
         for key, value in provider_info.items():
             output += f"{key}: {value}\n"
@@ -284,8 +291,8 @@ def upload_policies():
     pdf1.save("./pdf1.pdf")
     pdf2.save("./pdf2.pdf")
 
-    text1 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf1.pdf")
-    text2 = pdf_to_text(r"C:\Nishkal\Bitcamp 2024\InsuranceHack\pdf2.pdf")
+    text1 = pdf_to_text("/Users/abhyudaygoyal/Desktop/InsuranceHack-1/pdf1.pdf")
+    text2 = pdf_to_text("/Users/abhyudaygoyal/Desktop/InsuranceHack-1/pdf2.pdf")
 
     pdf1_data = read_pdf(text1)
     pdf2_data = read_pdf(text2)
@@ -305,6 +312,8 @@ def compare_policies():
     query = input_data.get("query")
     query += "\n\n\nKeywords: Schedule of Benefits, Coverage, Deductibles, $"
     output = execute_query(query, messages, chat, vectorstore)
+    pc.delete_index(index_name)
+
     return jsonify(output=output)
 
 

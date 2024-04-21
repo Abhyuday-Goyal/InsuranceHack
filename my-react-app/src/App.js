@@ -35,11 +35,11 @@ const App = () => {
         <Routes>
           
           <Route path ="/" element = {<Form></Form>}/>
-          <Route path ="/Compare" element = {<Comparison></Comparison>}/>
+          <Route path ="/upload-policies" element = {<Comparison></Comparison>}/>
 
           <Route path="/search-notes" element={<PolicyQuery />} />
          
-          <Route path="/analyse" element=   {<Coverage/>}/>
+          <Route path="/single-file" element=   {<Coverage/>}/>
           
         
         </Routes>

@@ -4,13 +4,28 @@ import './Coverage.css';
 const Coverage = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
-  const handleUpload = (event) => {
+  const handleUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       console.log('Uploading PDF file', file);
-      uploadFileToBackend(file).then(() => {
+
+      const formData = new FormData();
+      formData.append('pdf', file);
+
+      try {
+        await fetch('/single-file', {
+          method: 'POST',
+          body: JSON.stringify({ query: 'Coverage Analysis' }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
         setUploadedFiles(prevFiles => [...prevFiles, file]);
-      });
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        // Handle error
+      }
+
       event.target.value = null;
     }
   };
@@ -19,17 +34,7 @@ const Coverage = () => {
     setUploadedFiles(uploadedFiles.filter(file => file.name !== fileName));
   };
 
-  const handleButtonClick = () => {
-    document.getElementById('pdf-upload').click();
-  };
-
-  const uploadFileToBackend = async (file) => {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('File uploaded to backend:', file.name);
-  };
-
   return (
-    
     <div className="file-upload-container">
       <div className="compare-container">
         <h2 style={{ marginRight: '140px' }}>Coverage Analysis</h2>
@@ -57,12 +62,6 @@ const Coverage = () => {
         <div className="backend-output-boxx fade-in"></div>
       </div>
     </div>
-
-    
-    
-
-    
-    
   );
 };
 
