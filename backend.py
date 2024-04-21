@@ -96,11 +96,19 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 
 
+import pandas as pd
+import joblib
+from flask import request, jsonify
+
+
 @app.route("/add_person", methods=["POST"])
 def add_person():
     session = Session()
     try:
         data = request.json
+
+        # Load the model first
+        model = joblib.load("./xgb_regression_model.pkl")
 
         input_data = {
             "age": [data["age"]],
@@ -116,8 +124,6 @@ def add_person():
         result = (result[0] - 1121.87) / (63770.43 - 1121.87)
 
         data["riskIndex"] = result
-
-        model = joblib.load("./xgb_regression_model.pkl")
 
         person = Person(**data)
         session.add(person)
@@ -137,7 +143,14 @@ def get_users():
     users = session.query(Person).all()
     user_list = []
     for user in users:
-        user_data = {"id": user.userID, "username": user.username}
+        user_data = {
+            "age": user.age,
+            "sex": user.sex,
+            "bmi": user.bmi,
+            "children": user.children,
+            "smoker": user.smoker,
+            "region": user.region,
+        }
         user_list.append(user_data)
     return jsonify({"users": user_list})
 
