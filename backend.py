@@ -319,7 +319,13 @@ def upload_policies():
     add_embeds(pdf1_chunks, embed_model, index)
     add_embeds(pdf2_chunks, embed_model, index)
 
-    return "Policies processed!", 200
+    query = "Can you compare these two policies and tell me the differences and similarities between them? Focus on deductibles, coverage, and schedule of benefits"
+
+    query += "\n\n\nKeywords: Schedule of Benefits, Coverage, Deductibles, $"
+    output = execute_query(query, messages, chat, vectorstore)
+    pc.delete_index(index_name)
+
+    return jsonify(output=output)
 
 
 @app.route("/compare-policies", methods=["POST"])

@@ -147,7 +147,51 @@ body {
   transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
+.file-upload-button-1 {
+  margin-top: 20px;
+  border-radius: 8px;
+  width: auto; /* Adjust width as needed, could be a percentage or fixed width */
+  height: 50px; /* Match the height of your drop-down */
+  background-color: var(--accent-color); /* Header color, dark shade */
+  color: #fff; /* Text color, white */
+  font-size: 1rem; /* Adjust as needed */
+  font-weight: bold; /* Match the font weight from your example */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+  padding: 0 30px; /* Padding on the sides */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.file-upload-button-2 {
+  margin-top: 20px;
+  border-radius: 8px;
+  width: auto; /* Adjust width as needed, could be a percentage or fixed width */
+  height: 50px; /* Match the height of your drop-down */
+  background-color: var(--accent-color); /* Header color, dark shade */
+  color: #fff; /* Text color, white */
+  font-size: 1rem; /* Adjust as needed */
+  font-weight: bold; /* Match the font weight from your example */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+  padding: 0 30px; /* Padding on the sides */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
 .file-upload-button:hover {
+  background-color: var(--button-hover-color); /* Slightly lighter shade on hover */
+}
+
+.file-upload-button-1:hover {
+  background-color: var(--button-hover-color); /* Slightly lighter shade on hover */
+}
+
+.file-upload-button-2:hover {
   background-color: var(--button-hover-color); /* Slightly lighter shade on hover */
 }
 

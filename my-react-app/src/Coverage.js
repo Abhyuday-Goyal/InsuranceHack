@@ -58,8 +58,12 @@ const Coverage = () => {
           ))}
         </ul>
       </div>
-      {backendResponse && <div className="fade-in max-w-[50vw] overflow-auto p-10 bg-[#444444] rounded-lg"><p className='text-xl text-center'>{backendResponse}</p></div>}
-    </div>
+      {backendResponse && (
+  <div className="fade-in max-w-[50vw] overflow-auto p-8 bg-[#444444] rounded-lg" style={{ whiteSpace: "pre-wrap" , fontSize: "6"}}>
+    <p className='text-xl text-center'>{backendResponse}</p>
+  </div>
+  )}
+  </div>
   );
 };
 
