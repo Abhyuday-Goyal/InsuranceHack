@@ -1,48 +1,43 @@
 import React, { useState } from 'react';
 import './Comparison.css';
+
 const Comparison = () => {
-  const [uploadedFiles, setUploadedFiles] = useState([]); // Store uploaded files
+  const [uploadedFiles, setUploadedFiles] = useState([]);
 
   const handleUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
       console.log('Uploading PDF file', file);
-      // TODO: Send the file to the backend and store it
       uploadFileToBackend(file).then(() => {
         setUploadedFiles(prevFiles => [...prevFiles, file]);
       });
-      event.target.value = null; // Reset the file input after handling upload
+      event.target.value = null;
     }
   };
 
   const removeFile = (fileName) => {
     setUploadedFiles(uploadedFiles.filter(file => file.name !== fileName));
-    // TODO: Also remove the file from the backend if needed
   };
 
   const handleButtonClick = () => {
-    // Trigger file input click
     document.getElementById('pdf-upload').click();
   };
 
   const handleClearAll = () => {
     setUploadedFiles([]);
-    // TODO: Also clear files from the backend if needed
   };
 
-  // Simulate file upload to backend
   const uploadFileToBackend = async (file) => {
-    // Replace this with actual file upload logic
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating upload delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
     console.log('File uploaded to backend:', file.name);
   };
 
   return (
+    <>
     <div className="file-upload-container">
-      <h2 style={{ marginTop: '30px' }}>Compare Policies!</h2>
-      <label htmlFor="pdf-upload" className="file-upload-button">
-        Select File
-      </label>
+      <h3>Compare Policies!</h3>
+      <button onClick={handleButtonClick} className="select-file-button">UPLOAD PDF</button>
+      <button onClick={handleButtonClick} className="upload-pdf-button">UPLOAD PDF</button>
       <input
         type="file"
         id="pdf-upload"
@@ -51,19 +46,13 @@ const Comparison = () => {
         onChange={handleUpload}
         style={{ display: 'none' }} 
       />
-      <button onClick={handleButtonClick} className="file-upload-button">UPLOAD PDF</button>
-      <ul>
-        {uploadedFiles.map((file, index) => (
-          <li key={index}>
-            {file.name}
-            <button onClick={() => removeFile(file.name)} className="remove-file-button">
-              Remove
-            </button>
-          </li>
-        ))}
-      </ul>
-     
+      
+      {/* Directly apply styles without using a div */}
+      
     </div>
+    <div className="backend-output-boxxx fade-in"></div>
+    </>
+    
   );
 };
 
