@@ -97,7 +97,7 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 
 
-@app.route("/provider_details", methids=["POST"])
+@app.route("/provider_details", methods=["POST"])
 def provider_details():
     data = request.json
     provider = data["provider"]
