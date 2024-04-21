@@ -36,7 +36,6 @@ const App = () => {
           
           <Route path ="/" element = {<Form></Form>}/>
           <Route path ="/upload-policies" element = {<Comparison></Comparison>}/>
-
           <Route path="/search-notes" element={<PolicyQuery />} />
          
           <Route path="/single-file" element=   {<Coverage/>}/>
