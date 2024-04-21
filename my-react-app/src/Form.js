@@ -3,13 +3,12 @@ import './Form.css';
 
 const Form = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    gender: '',
     age: '',
-    numberOfChildren: '',
+    sex: '',
     bmi: '',
+    children: '',
+    smoker: '',
     region: '',
-    stateInitials: '', // Added new field
   });
 
   const handleChange = (e) => {
@@ -19,37 +18,45 @@ const Form = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+
+    try {
+      const response = await fetch('/add_person', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add person');
+      }
+
+      const responseData = await response.json();
+      console.log(responseData);
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
     <div className="form-container">
       <h2>User Details</h2>
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Name:</label>
+      <div className="form-group">
+          <label htmlFor="username">UserName:</label>
           <input
             type="text"
-            id="name"
-            name="name"
-            value={formData.name}
+            id="username"
+            name="username"
+            value={formData.username}
             onChange={handleChange}
             required
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="gender">Gender:</label>
-          <input
-            type="text"
-            id="gender"
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        
         <div className="form-group">
           <label htmlFor="age">Age:</label>
           <input
@@ -62,12 +69,12 @@ const Form = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="numberOfChildren">Number of Children:</label>
+          <label htmlFor="sex">Sex:</label>
           <input
-            type="number"
-            id="numberOfChildren"
-            name="numberOfChildren"
-            value={formData.numberOfChildren}
+            type="text"
+            id="sex"
+            name="sex"
+            value={formData.sex}
             onChange={handleChange}
             required
           />
@@ -84,6 +91,39 @@ const Form = () => {
           />
         </div>
         <div className="form-group">
+          <label htmlFor="children">Children:</label>
+          <input
+            type="number"
+            id="children"
+            name="children"
+            value={formData.children}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="smoker">Smoker:</label>
+          <input
+            type="text"
+            id="smoker"
+            name="smoker"
+            value={formData.smoker}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="state">State:</label>
+          <input
+            type="text"
+            id="state"
+            name="state"
+            value={formData.state}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
           <label htmlFor="region">Region:</label>
           <select
             id="region"
@@ -93,24 +133,13 @@ const Form = () => {
             required
           >
             <option value="">Select Region</option>
-            <option value="NW">Northwest (NW)</option>
-            <option value="NE">Northeast (NE)</option>
-            <option value="SW">Southwest (SW)</option>
-            <option value="SE">Southeast (SE)</option>
+            <option value="NW">northwest </option>
+            <option value="NE">northeast </option>
+            <option value="SW">southwest </option>
+            <option value="SE">southeast </option>
           </select>
         </div>
-        {/* New form group for State (Initials) */}
-        <div className="form-group">
-          <label htmlFor="stateInitials">State (Initials):</label>
-          <input
-            type="text"
-            id="stateInitials"
-            name="stateInitials"
-            value={formData.stateInitials}
-            onChange={handleChange}
-            required
-          />
-        </div>
+        
         {/* Submit button */}
         <button type="submit">Submit</button>
       </form>
