@@ -102,16 +102,18 @@ def add_person():
     try:
         data = request.json
 
-        input_data = {"age" : [data["age"]],
-                      "sex": [data["sex"]],
-                      "bmi": [data["bmi"]],
-                      "children": [data["children"]],
-                      "smoker": [data["smoker"]],
-                      "region": [data["region"]]}
+        input_data = {
+            "age": [data["age"]],
+            "sex": [data["sex"]],
+            "bmi": [data["bmi"]],
+            "children": [data["children"]],
+            "smoker": [data["smoker"]],
+            "region": [data["region"]],
+        }
 
         df = pd.DataFrame(input_data)
         result = model.predict(df)
-        result = (result[0] - 1121.87)/(63770.43 - 1121.87)
+        result = (result[0] - 1121.87) / (63770.43 - 1121.87)
 
         data["riskIndex"] = result
 
@@ -129,17 +131,15 @@ def add_person():
         session.close()
 
 
-@app.route("/get_people", methods=["GET"])
-def get_people():
+@app.route("/users", methods=["GET"])
+def get_users():
     session = Session()
-    try:
-        people = session.query(Person).all()
-        serialized_people = [person.__dict__ for person in people]
-        return jsonify(serialized_people), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    finally:
-        session.close()
+    users = session.query(Person).all()
+    user_list = []
+    for user in users:
+        user_data = {"id": user.userID, "username": user.username}
+        user_list.append(user_data)
+    return jsonify({"users": user_list})
 
 
 max_chunk_length = 500  # Choose the maximum length for each chunk
