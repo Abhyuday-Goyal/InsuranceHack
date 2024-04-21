@@ -47,7 +47,7 @@ messages2 = [
         content="""You are a complete insurance policy expert. You can answer any questions about the insurance policy of a user. Analyze the uploaded insurance policy and provide a detailed reports on whatever the user requests.
         Remember to provide exact numbers and figures from the policy for better understanding.
         
-        Return your responses in a structured report format. Focus on the costs of the policy, the coverage provided, and any other important details that the user may need to know. You can also provide a summary of the policy and its benefits."""
+        Focus on the costs of the policy, the coverage provided, and any other important details that the user may need to know. You can also provide a summary of the policy and its benefits."""
     ),
 ]
 messages = [
@@ -56,7 +56,7 @@ messages = [
                   to determine the differences and similarities between them. FOCUS ON THE COVERAGE INFORMATION, DEDUCTIBLES, AND SCHEDULE OF BENEFITS. You can also provide recommendations based on the policies provided.
                   You can also provide explanations on insurance terms and concepts. You can also provide general information on insurance policies.
                   
-                  Return your responses in a structured report format. You can also provide a summary of the differences and similarities between the two policies.
+                  You can also provide a summary of the differences and similarities between the two policies.
                   Remember to mention clearly which company you are talking about so that the reader can understand the context of the information provided.
                   You can also provide numbers and clear differences between the two policies.
                   
