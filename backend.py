@@ -100,9 +100,26 @@ def add_person():
     session = Session()
     try:
         data = request.json
+
+        input_data = {"age" : [data["age"]],
+                      "sex": [data["sex"]],
+                      "bmi": [data["bmi"]],
+                      "children": [data["children"]],
+                      "smoker": [data["smoker"]],
+                      "region": [data["region"]]}
+
+        df = pd.DataFrame(input_data)
+        result = model.predict(df)
+        result = (result[0] - 1121.87)/(63770.43 - 1121.87)
+
+        data["premium"] = result
+
+        model = joblib.load("./xgb_regression_model.pkl")
+
         person = Person(**data)
         session.add(person)
         session.commit()
+
         return jsonify({"message": "Person added successfully"}), 201
     except Exception as e:
         session.rollback()
@@ -157,22 +174,22 @@ def load_info_pdf():
         return "Internal Server Error", 500
 
 
-@app.route("/predict-premium", methods=["POST"])
-def predict_premium():
-    try:
-        input_data = request.get_json()
-        df = pd.DataFrame(input_data)
-        print(df)
+# @app.route("/predict-premium", methods=["POST"])
+# def predict_premium():
+#     try:
+#         input_data = request.get_json()
+#         df = pd.DataFrame(input_data)
+#         print(df)
 
-        model = joblib.load("./xgb_regression_model.pkl")
+#         model = joblib.load("./xgb_regression_model.pkl")
 
-        result = model.predict(df)
-        return str(result[0])
-    except Exception as e:
-        # Log the error or print it for debugging
-        print("Error:", e)
-        # Return an appropriate error response
-        return "Internal Server Error", 500
+#         result = model.predict(df)
+#         return str(result[0])
+#     except Exception as e:
+#         # Log the error or print it for debugging
+#         print("Error:", e)
+#         # Return an appropriate error response
+#         return "Internal Server Error", 500
 
 
 @app.route("/chat-search-data", methods=["POST"])
