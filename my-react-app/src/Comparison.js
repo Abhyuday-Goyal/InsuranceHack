@@ -51,7 +51,7 @@ const Comparison = () => {
             <input
               type="file"
               id="pdf-upload-1"
-              className="file-upload-input-1"
+              className="file-upload-input"
               accept=".pdf"
               onChange={handleUpload1}
               style={{ display: 'none' }}
@@ -64,7 +64,7 @@ const Comparison = () => {
             <input
               type="file"
               id="pdf-upload-2"
-              className="file-upload-input-2"
+              className="file-upload-input"
               accept=".pdf"
               onChange={handleUpload2}
               style={{ display: 'none' }}
@@ -76,8 +76,8 @@ const Comparison = () => {
         </div>
       </div>
       {comparisonResult && (
-  <div className="fade-in max-w-[50vw] overflow-auto p-8 bg-[#444444] rounded-lg" style={{ whiteSpace: "pre-wrap" , fontSize: "6"}}>
-    <p className='text-xl text-center'>{comparisonResult}</p>
+      <div className="fade-in max-w-[50vw] overflow-auto p-8 bg-[#444444] rounded-lg" style={{ whiteSpace: "pre-wrap" , fontSize: "6"}}>
+      <p className='text-xl text-center'>{comparisonResult}</p>
   </div>
   )}
     </>
