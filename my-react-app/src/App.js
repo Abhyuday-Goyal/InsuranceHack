@@ -1,15 +1,14 @@
 // App.js
 import React, { useState } from 'react';
-import SearchNotesPage from './SearchNotesPage';
+import PolicyQuery from './PolicyQuery';
 import { useNavigate } from 'react-router-dom';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import WhiteboardUploadPage from './WhiteboardUploadPage';
-import NotesUploadPage from './NotesUploadPage';
-import PdfUploadPage from './PdfUploadPage';
-import AboutUsPage from './AboutUsPage';
+
+import Comparison from './Comparison';
+
 import TaskBar from './TaskBar';
-import Compare from './Compare';
+import Coverage from './Coverage';
 import Form from './Form'
 
 const App = () => {
@@ -36,16 +35,16 @@ const App = () => {
         <Routes>
           
           <Route path ="/" element = {<Form></Form>}/>
-          <Route path ="/compare" element = {<Compare></Compare>}/>
-          <Route path="/search-notes" element={<SearchNotesPage />} />
-          <Route path="/pdf-upload" element={<PdfUploadPage />} />
-          <Route path="/about" element={<AboutUsPage />} />
+          <Route path ="/Compare" element = {<Comparison></Comparison>}/>
+
+          <Route path="/search-notes" element={<PolicyQuery />} />
+         
+          <Route path="/analyse" element=   {<Coverage/>}/>
+          
+        
         </Routes>
       </div>
     </Router>
   );
 }
-
-
-
 export default App;

@@ -1,0 +1,56 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+  }
+  
+  .form-container {
+    max-width: 400px;
+    padding: 30px;
+    border: 1px solid rgb(195, 26, 26);
+    border-radius: 5px;
+    background-color: #040303;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-top: 0;
+    color: white;
+    margin-bottom: 20px;
+    margin-left: 135px;
+    margin-right: 270px;
+    white-space: nowrap;
+  }
+  
+  .form-group {
+    margin-bottom: 10px;
+  }
+  
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  input[type='text'],
+  input[type='number'],
+  select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgb(104, 36, 36);
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+    margin-top: 5px;
+  }
+  
+  .button {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  button:hover {
+    background-color: #e01717;
+  }

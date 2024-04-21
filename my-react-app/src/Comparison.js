@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-
-const Compare = () => {
+import './Comparison.css';
+const Comparison = () => {
   const [uploadedFiles, setUploadedFiles] = useState([]); // Store uploaded files
 
   const handleUpload = (event) => {
@@ -25,6 +25,11 @@ const Compare = () => {
     document.getElementById('pdf-upload').click();
   };
 
+  const handleClearAll = () => {
+    setUploadedFiles([]);
+    // TODO: Also clear files from the backend if needed
+  };
+
   // Simulate file upload to backend
   const uploadFileToBackend = async (file) => {
     // Replace this with actual file upload logic
@@ -33,8 +38,8 @@ const Compare = () => {
   };
 
   return (
-    <div className="compare-container">
-      <h2 style={{ marginTop: '30px' }}>Compare Files</h2>
+    <div className="file-upload-container">
+      <h2 style={{ marginTop: '30px' }}>Compare Policies!</h2>
       <label htmlFor="pdf-upload" className="file-upload-button">
         Select File
       </label>
@@ -44,9 +49,9 @@ const Compare = () => {
         className="file-upload-input"
         accept=".pdf"
         onChange={handleUpload}
-        style={{ display: 'none' }} // Hide the input element
+        style={{ display: 'none' }} 
       />
-    
+      <button onClick={handleButtonClick} className="file-upload-button">UPLOAD PDF</button>
       <ul>
         {uploadedFiles.map((file, index) => (
           <li key={index}>
@@ -57,8 +62,9 @@ const Compare = () => {
           </li>
         ))}
       </ul>
+     
     </div>
   );
 };
 
-export default Compare;
+export default Comparison;

@@ -1,0 +1,21 @@
+.file-upload-container {
+  
+    justify-content: center;
+    align-items: centre;
+    margin-top: -300px;
+    margin-left: -350px;
+  }
+  .compare-container {
+    margin-bottom: 5px;
+    margin-left: 290px;
+  }
+  .backend-output-boxx {
+    width: 500%; /* Match width to search bar */
+    height: 500px; /* Decent size for output */
+    background-color: var(--modal-bg-color); /* Matching contrast */
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: -100px; /* Space after the output box */
+    margin-top: 30px;
+    margin-left: -435px;
+  }

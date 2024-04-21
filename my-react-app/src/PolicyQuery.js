@@ -2,11 +2,11 @@
 import React from 'react';
 import './App.css';
 
-const SearchNotesPage = () => {
+const PolicyQuery = () => {
   return (
     <div className="search-notes-container">
       <div className="search-notes-content">
-        <h1 className="search-notes-title fade-in">Chat with your notes</h1>
+        <h1 className="search-notes-title fade-in">Query your Policy!</h1>
         <div className="search-notes-input-container fade-in">
           <input
             type="text"
@@ -20,4 +20,4 @@ const SearchNotesPage = () => {
   );
 };
 
-export default SearchNotesPage;
+export default PolicyQuery;
