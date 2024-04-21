@@ -86,7 +86,7 @@ class Person(Base):
     sex = Column("Sex", String)
     bmi = Column("BMI", Float)
     children = Column("Number of Children", Integer)
-    smoker = Column("smoker?", Boolean)
+    smoker = Column("smoker", String)
     region = Column("region", String)
     riskIndex = Column("risk_index", Float)
 
@@ -96,19 +96,11 @@ Base.metadata.create_all(bind=engine)
 Session = sessionmaker(bind=engine)
 
 
-import pandas as pd
-import joblib
-from flask import request, jsonify
-
-
 @app.route("/add_person", methods=["POST"])
 def add_person():
     session = Session()
     try:
         data = request.json
-
-        # Load the model first
-        model = joblib.load("./xgb_regression_model.pkl")
 
         input_data = {
             "age": [data["age"]],
@@ -120,6 +112,7 @@ def add_person():
         }
 
         df = pd.DataFrame(input_data)
+        model = joblib.load("./xgb_regression_model.pkl")
         result = model.predict(df)
         result = (result[0] - 1121.87) / (63770.43 - 1121.87)
 
@@ -135,7 +128,6 @@ def add_person():
         return jsonify({"error": str(e)}), 500
     finally:
         session.close()
-
 
 @app.route("/users", methods=["GET"])
 def get_users():
