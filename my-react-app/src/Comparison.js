@@ -33,7 +33,7 @@ const Comparison = () => {
   };
 
   return (
-    
+    <>
     <div className="file-upload-container">
       <h3>Compare Policies!</h3>
       <button onClick={handleButtonClick} className="select-file-button">UPLOAD PDF</button>
@@ -61,6 +61,8 @@ const Comparison = () => {
       {/* Directly apply styles without using a div */}
       
     </div>
+    <div className="backend-output-boxxx fade-in"></div>
+    </>
     
   );
 };

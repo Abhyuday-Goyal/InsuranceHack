@@ -1,10 +1,19 @@
 .file-upload-container {
+ 
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
-
+.backend-output-boxxx {
+  width: 700px; /* Adjusted width for better readability */
+  height: 500px;
+  
+  background-color: var(--modal-bg-color);
+  border-radius: 4px;
+position: fixed;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
 .select-file-button {
   position: absolute;
   top: 0;
@@ -47,4 +56,10 @@ h3 {
   }
   .compare-container {
     text-align: center; /* Center-align text */
+  }
+  h3 {
+    font-size: 2rem; /* Increase font size */
+    text-align: center; /* Center align text */
+    
+  
   }
