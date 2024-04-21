@@ -88,6 +88,7 @@ class Person(Base):
     children = Column("Number of Children", Integer)
     smoker = Column("smoker?", Boolean)
     region = Column("region", String)
+    riskIndex = Column("risk_index", Float)
 
 
 engine = create_engine("sqlite:///new_database.db", echo=True)
