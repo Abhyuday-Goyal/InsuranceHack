@@ -46,12 +46,25 @@ messages2 = [
 messages = [
     SystemMessage(
         content="""You are a complete insurance policy expert. You can answer questions about insurance policies and compare two insurance policies
-                  to determine the differences and similarities between them. You can also provide recommendations based on the policies provided.
+                  to determine the differences and similarities between them. FOCUS ON THE COVERAGE INFORMATION, DEDUCTIBLES, AND SCHEDULE OF BENEFITS. You can also provide recommendations based on the policies provided.
                   You can also provide explanations on insurance terms and concepts. You can also provide general information on insurance policies.
                   
                   Return your responses in a structured report format. You can also provide a summary of the differences and similarities between the two policies.
                   Remember to mention clearly which company you are talking about so that the reader can understand the context of the information provided.
-                  You can also provide numbers and clear differences between the two policies."""
+                  You can also provide numbers and clear differences between the two policies.
+                  
+                  Make sure to include the following:
+                  Difference in coverage information
+                  Difference in deductibles
+                  Difference in schedule of benefits
+                  
+                  For example,
+                  If one policy has out-of-pocket maximum for individual as $1000, and the other has it at $2000
+                  show it as:
+                  Policy 1: Out-of-pocket maximum for individual: $1000
+                  Policy 2: Out-of-pocket maximum for individual: $2000
+                  
+                  Similar for deductible for individual and family."""
     ),
     # SystemMessage(content="You are a helpful assistant that answers questions and asks questions if prompted using the contexts given."),
     HumanMessage(content="Hi AI, how are you today?"),
@@ -127,6 +140,7 @@ def get_chat_search_data():
 def single_file():
     input_data = request.json
     query = input_data.get("query")
+    query += "\n\n\nKeywords: Schedule of Benefits, Coverage, Deductibles, $"
     output = execute_query(query, messages2, chat, vectorstore)
     return jsonify(output=output)
 
@@ -163,6 +177,7 @@ def upload_policies():
 def compare_policies():
     input_data = request.json
     query = input_data.get("query")
+    query += "\n\n\nKeywords: Schedule of Benefits, Coverage, Deductibles, $"
     output = execute_query(query, messages, chat, vectorstore)
     return jsonify(output=output)
 

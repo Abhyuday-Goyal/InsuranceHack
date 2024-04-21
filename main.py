@@ -54,7 +54,7 @@ def add_embeds(sentence_chunks, embed_model, index):
 
 def augment_prompt(query: str, vectorstore: Pinecone):
     # get top 5 results from knowledge base
-    results = vectorstore.similarity_search(query, k=5)
+    results = vectorstore.similarity_search(query, k=10)
     print(results)
     # get the text from the results
     source_knowledge = "\n".join([x.page_content for x in results])
@@ -66,7 +66,7 @@ def augment_prompt(query: str, vectorstore: Pinecone):
 
     # Query: {query}"""
 
-    augmented_prompt = f"""Use the given context to provide answers to the query.
+    augmented_prompt = f"""Use the given context to provide precise answers to the query.
 
     Contexts:
     {source_knowledge}
