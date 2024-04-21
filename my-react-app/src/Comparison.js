@@ -46,18 +46,7 @@ const Comparison = () => {
         onChange={handleUpload}
         style={{ display: 'none' }} 
       />
-      <ul>
-        {uploadedFiles.map((file, index) => (
-          <li key={index}>
-            {file.name}
-            <button onClick={() => removeFile(file.name)} className="remove-file-button">
-              Remove
-            </button>
-          </li>
-          
-        ))}
-        
-      </ul>
+      
       {/* Directly apply styles without using a div */}
       
     </div>

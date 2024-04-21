@@ -15,11 +15,27 @@ position: fixed;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 .select-file-button {
+  color: black;
   position: absolute;
   top: 0;
   left: 0;
   margin-top: 90px;
-  margin-left: 10px;
+  margin-left: 400px;
+
+  border-radius: 8px;
+  width: auto;
+
+  background-color: var(--accent-color);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 0 30px;
+  transition: background-color 0.3s ease;
 }
 
 .upload-pdf-button {
@@ -27,7 +43,21 @@ position: fixed;
   top: 0;
   right: 0;
   margin-top: 90px;
-  margin-right: 10px;
+  margin-right: 400px;
+  border-radius: 8px;
+  width: auto;
+
+  background-color: var(--accent-color);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 0 30px;
+  transition: background-color 0.3s ease;
 }
 
 .file-upload-input {
@@ -39,9 +69,6 @@ ul {
   padding: 0;
 }
 
-.remove-file-button {
-  margin-left: 10px;
-}
 
 h3 {
   margin-top: -580px;
