@@ -113,7 +113,7 @@ const Form = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="state">State:</label>
+          <label htmlFor="State">State:</label>
           <input
             type="text"
             id="state"
@@ -124,7 +124,7 @@ const Form = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="region">Region:</label>
+          <label htmlFor="Region">Region:</label>
           <select
             id="region"
             name="region"
