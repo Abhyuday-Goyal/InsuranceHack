@@ -12,7 +12,7 @@ const Coverage = () => {
     const formData = new FormData();
     formData.append('pdf1', file);
     try {
-      // Send the POST request to your custom API
+      // Send the post request to your custom API
       const response = await fetch('http://127.0.0.1:5000/chat-search-data', {
         method: 'POST',
         body: formData,
